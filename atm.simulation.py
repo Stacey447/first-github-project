@@ -3,29 +3,134 @@ users = [{"username": "admin",
           "balance": 0.0,
           "role": "admin"}]
 
+current_user = None
+balance = 0.0
 def admin_menu():
-    print("1. Create new user account")
-    print("2. View all users")
-    print("3. Update profile")
-    print("4. Logout")
-    print("5. Exit")
+    while True:
+      print("1. Create new user account")
+      print("2. View all users")
+      print("3. Update profile")
+      print("4. Login")
+      print("5. Logout")
+      print("6. Exit")
     
-    choice = input("\nEnter your choice (1 - 5): ")
+      choice = input("\nEnter your choice (1 - 6): ")
     
-    if choice == '1':
-        create_user()
-    elif choice == '2':
+      if choice == '1':
+          create_user()
+      elif choice == '2':
         view_all_users()
-    elif choice == '3':
-        update_profile()
-    elif choice == '4':
-        logout()
-    elif choice == '5':
-        exit()
-    else:
-        print("\nInvalid entry.")
+      elif choice == '3':
+          update_profile()
+      elif choice == '4':
+          login()
+      elif choice == '5':
+          logout()
+      elif choice == '6':
+          exit()
+      else:
+          print("\nInvalid entry.")
+          
+def show_balance():
+    print(f"\nYour current balance is: ${balance:.2f}\n")
 
+def transfer():
+    while True: 
+        recipient_name = input("Enter recipient name: ")
+        recipient = None
+        for user in users:
+            if user["username"] == recipient_name and user !=current_user:
+                recipient = user
+                break
+            if not recipient:
+                print("Transfer can not take place. User not found")
+                continue
+            break
+
+    while True: 
+        amount_input =  input("Enter amount: ")
+        try:
+            amount = float(amount_input)
+            if amount > current_user["balance"]: 
+                print("\nInsufficient funds. Please enter another amount.")
+                continue
+            break
+        except ValueError:
+            print("\nInvalid input.")
+
+    current_user["balance"] -= amount
+    recipient["balance"] += amount
+
+    print(f"\nAmount of ${amount:.2f} has been transferred to {recipient_name}")
+    print(f"New balance: ${current_user['balance']:.2f}")
+           
+def deposit():
+  global balance
+  try:
+     amount = float(input("\nEnter amount to deposit: $"))
+     if amount > 0:
+        balance += amount
+        print(f"${amount:.2f} deposited successfully.\n")
+     else:
+         print("\nPlease enter a positive amount.\n")
+         print(f"New balance: ${current_user['balance']:.2f}")
+  except ValueError:
+      print("\nInvalid input. Please enter a numeric value.\n")
+
+def withdraw():
+    global balance
+    try:
+        amount = float(input("\nEnter amount to withdraw: $"))
+        if 0 < amount <= balance:
+            balance -= amount
+            print(f"${amount:.2f} withdrawn successfully.\n")
+        elif amount > balance:
+            print("\nInsufficient funds.\n")
+        else:
+            print("\nPlease enter a positive amount.\n")
+            print(f"New balance: ${current_user['balance']:.2f}")
+    except ValueError:
+        print("\nInvalid input. Please enter a numeric value.\n")
+          
+def user_menu():
+    global current_user
+    while True:
+        print("1. Deposit")
+        print("2. Withdraw")
+        print("3. Transfer")
+        print("4. Check Balance")
+        print("5. Update Profile")
+        print("6. Logout")
+        print("7. Exit ATM")
+        
+        choice = input("\nEnter your choice (1-7):\n")
+        
+        if choice == "1":
+            deposit()
+        elif choice == '2':
+            withdraw()
+        elif choice == '3':
+            transfer()        
+        elif choice == '4':
+            show_balance()
+        elif choice == '5':
+            update_profile()
+        elif choice == '6':
+            logout()
+            return
+        elif choice == '8':
+            exit_atm()
+        else:
+            print("\nInvalid choice. Please enter a number between 1-5.")
+            input("\nPress Enter to continue...")
+          
 def update_profile():
+    global current_user
+    
+    if current_user is None:
+        print("No user currently logged in.")
+        return
+    
     while True:
         print(f"Current username: {current_user['username']}")
         print("1. Change Username")
@@ -78,6 +183,7 @@ def create_user():
 
         print(f"\nSuccessfully created account for {username}")
         return
+    user_menu()
 
 def view_all_users():
     print(f"{'Username':<20} {'Balance':>15}")
@@ -86,95 +192,7 @@ def view_all_users():
     for user in users:
         print(f"{user['username']:<20} ${user['balance']:>14.2f}")                   
 
-def show_balance():
-    print(f"\nYour current balance is: ${balance:.2f}\n")
-
-def transfer():
-    while True: 
-        recipient_name = input("Enter recipient name: ")
-
-        recipient = None
-        for user in users:
-            if user["username"] == recipient_name and user !=current_user:
-                recipient = user
-                break
-
-    while True: 
-        amount_input =  input("Enter amount: ")
-        try:
-            amount = float(amount_input)
-            if amount > current_user["balance"]: 
-                print("\nInsufficient funds. Please enter another amount.")
-                continue
-            break
-        except ValueError:
-            print("\nInvalid input.")
-
-    current_user["balance"] -= amount
-    recipient["balance"] += amount
-
-    print(f"\nAmount of ${amount:.2f} has been transferred to {recipient_name}")
-    print(f"New balance: ${current_user['balance']:.2f}")
-           
-def deposit():
-  global balance
-  try:
-     amount = float(input("\nEnter amount to deposit: $"))
-     if amount > 0:
-        balance += amount
-        print(f"${amount:.2f} deposited successfully.\n")
-     else:
-         print("\nPlease enter a positive amount.\n")
-  except ValueError:
-      print("\nInvalid input. Please enter a numeric value.\n")
-
-def withdraw():
-    global balance
-    try:
-        amount = float(input("\nEnter amount to withdraw: $"))
-        if 0 < amount <= balance:
-            balance -= amount
-            print(f"${amount:.2f} withdrawn successfully.\n")
-        elif amount > balance:
-            print("\nInsufficient funds.\n")
-        else:
-            print("\nPlease enter a positive amount.\n")
-    except ValueError:
-        print("\nInvalid input. Please enter a numeric value.\n")
-
-def user_menu():
-    global current_user
-    while True:
-        print("1. Deposit")
-        print("2. Withdraw")
-        print("3. Transfer")
-        print("4. Check Balance")
-        print("5. Update Profile")
-        print("6. Logout")
-        print("7. Exit ATM")
-        
-        choice = input("\nEnter your choice (1-7)")
-        
-        if choice == "1":
-            deposit()
-        elif choice == '2':
-            withdraw()
-        elif choice == '3':
-            transfer()        
-        elif choice == '4':
-            show_balance()
-        elif choice == '5':
-            update_profile()
-        elif choice == '6':
-            logout()
-            return
-        elif choice == '8':
-            exit_atm()
-        else:
-            print("\nInvalid choice. Please enter a number between 1-5.")
-            input("\nPress Enter to continue...")
-
-def user_login():
+def login():
     while True:
         username = input("Username: ")
         password = input("Password: ")
@@ -198,6 +216,21 @@ def logout():
     current_user = None
     print("\nYou have been successfully logged out.")    
 
-admin_menu()             
+def main():
+    while True:
+        if current_user is None:
+            if not login():
+                exit_atm()
+                break
+        else:
+            if current_user["role"] == "admin":
+                admin_menu()
+            else:
+                user_menu()
+
+if __name__ == "__main__":             
+    main() 
+      
+          
   
 
