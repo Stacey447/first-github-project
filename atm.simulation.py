@@ -4,7 +4,22 @@ users = [{"username": "admin",
           "role": "admin"}]
 
 current_user = None
+
 balance = 0.0
+
+
+def main():
+    while True:
+        # if current_user is None:
+        if not login():
+            # exit_atm()
+            break
+        else:
+            if current_user["role"] == "admin":
+                admin_menu()
+            else:
+                user_menu()
+
 def admin_menu():
     while True:
       print("1. Create new user account")
@@ -47,7 +62,7 @@ def transfer():
                 continue
             break
 
-    while True: 
+    # while True:
         amount_input =  input("Enter amount: ")
         try:
             amount = float(amount_input)
@@ -167,7 +182,9 @@ def update_profile():
         else:
             print("Invalid choice. Please enter a number between 1-3.")
 
+
 def create_user():
+    global current_user
     while True:
         username = input("Enter new username: ")
 
@@ -180,24 +197,29 @@ def create_user():
                     "role": "user"}
 
         users.append(new_user)
-
+        current_user = new_user
         print(f"\nSuccessfully created account for {username}")
         return
-    user_menu()
+        # auto_login()
 
 def view_all_users():
     print(f"{'Username':<20} {'Balance':>15}")
     print("-" * 35)
     
     for user in users:
-        print(f"{user['username']:<20} ${user['balance']:>14.2f}")                   
+        print(f"{user['username']:<20} ${user['balance']:>14.2f}")
+
 
 def login():
+        
+    global current_user
+    
     while True:
         username = input("Username: ")
         password = input("Password: ")
         
         for user in users:
+            
             if user["username"] == username and user["password"] == password:
                 current_user = user
                 print(f"\nWelcome, {username}!")
@@ -213,24 +235,13 @@ def exit_atm():
     
 def logout():
     global current_user
-    current_user = None
-    print("\nYou have been successfully logged out.")    
-
-def main():
     while True:
-        if current_user is None:
-            if not login():
-                exit_atm()
-                break
+        if current_user ["role"] == "admin":
+            current_user = None
         else:
-            if current_user["role"] == "admin":
-                admin_menu()
-            else:
-                user_menu()
+            current_user = None
+        return
+        print("\nYou have been successfully logged out.")
 
-if __name__ == "__main__":             
-    main() 
-      
-          
-  
-
+if __name__ == "__main__":
+    main()
