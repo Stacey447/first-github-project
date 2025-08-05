@@ -7,8 +7,9 @@ current_user = None
 
 balance = 0.0
 
-
 def main():
+    global current_user
+
     while True:
         # if current_user is None:
         if not login():
@@ -22,30 +23,30 @@ def main():
 
 def admin_menu():
     while True:
-      print("1. Create new user account")
-      print("2. View all users")
-      print("3. Update profile")
-      print("4. Login")
-      print("5. Logout")
-      print("6. Exit")
-    
-      choice = input("\nEnter your choice (1 - 6): ")
-    
-      if choice == '1':
-          create_user()
-      elif choice == '2':
-        view_all_users()
-      elif choice == '3':
-          update_profile()
-      elif choice == '4':
-          login()
-      elif choice == '5':
-          logout()
-      elif choice == '6':
-          exit()
-      else:
-          print("\nInvalid entry.")
-          
+        print("1. Create new user account")
+        print("2. View all users")
+        print("3. Update profile")
+        print("4. Login")
+        print("5. Logout")
+        print("6. Exit")
+
+        choice = input("\nEnter your choice (1 - 6): ")
+
+        if choice == '1':
+            create_user()
+        elif choice == '2':
+            view_all_users()
+        elif choice == '3':
+            update_profile()
+        elif choice == '4': #I ADDED A RETURN TO LET THE MAIN FUNCTION HANDLE IT
+            return
+        elif choice == '5':
+            logout()
+        elif choice == '6':
+            exit()
+        else:
+            print("\nInvalid entry.")
+            
 def show_balance():
     print(f"\nYour current balance is: ${balance:.2f}\n")
 
@@ -80,17 +81,17 @@ def transfer():
     print(f"New balance: ${current_user['balance']:.2f}")
            
 def deposit():
-  global balance
-  try:
-     amount = float(input("\nEnter amount to deposit: $"))
-     if amount > 0:
-        balance += amount
-        print(f"${amount:.2f} deposited successfully.\n")
-     else:
-         print("\nPlease enter a positive amount.\n")
-         print(f"New balance: ${current_user['balance']:.2f}")
-  except ValueError:
-      print("\nInvalid input. Please enter a numeric value.\n")
+    global balance
+    try:
+        amount = float(input("\nEnter amount to deposit: $"))
+        if amount > 0:
+            balance += amount
+            print(f"${amount:.2f} deposited successfully.\n")
+        else:
+            print("\nPlease enter a positive amount.\n")
+            print(f"New balance: ${current_user['balance']:.2f}")
+    except ValueError:
+        print("\nInvalid input. Please enter a numeric value.\n")
 
 def withdraw():
     global balance
